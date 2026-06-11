@@ -13,7 +13,7 @@ export default function FormField({ label, error, id, ...inputProps }: FormField
 
   return (
     <div>
-      <Label htmlFor={fieldId} className="mb-1.5 text-lavender">
+      <Label htmlFor={fieldId} className="mb-2 text-lavender">
         {label}
       </Label>
       <Input

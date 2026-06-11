@@ -13,7 +13,9 @@ export default function AuthCard({ children, title, description }: AuthCardProps
         <CardTitle className="text-center text-xl font-semibold tracking-[5px] text-floral-white">
           {title}
         </CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
+        {description && (
+          <CardDescription className="text-center mt-2">{description}</CardDescription>
+        )}
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>

@@ -45,11 +45,14 @@ export default function ForgotPasswordPage() {
       <AuthCard title="重設密碼" description="輸入你的電子郵件，我們會寄送重設連結">
         {success ? (
           <Alert className="rounded-xl border-transparent bg-pearl-aqua/10 px-4 py-4 text-center">
+            <span className="mb-1 text-4xl" aria-hidden="true">
+              💌
+            </span>
             <AlertTitle className="text-pearl-aqua">重設連結已寄出！</AlertTitle>
             <AlertDescription className="mt-1 block">請查看你的信箱</AlertDescription>
-            <Link to="/login" className="mt-4 text-sm text-primary hover:underline">
-              返回登入
-            </Link>
+            <Button asChild size="lg" className="mt-4 justify-self-center rounded-xl px-6">
+              <Link to="/login">返回登入</Link>
+            </Button>
           </Alert>
         ) : (
           <>
