@@ -1,6 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
+import AppLayout from '@/components/layout/AppLayout'
+import AccountsPage from '@/pages/accounts/AccountsPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
@@ -34,12 +36,21 @@ export const router = createBrowserRouter([
     element: <ResetPasswordPage />,
   },
   {
-    path: '/',
     element: (
       <ProtectedRoute>
-        <DashboardPage />
+        <AppLayout />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: '/',
+        element: <DashboardPage />,
+      },
+      {
+        path: '/accounts',
+        element: <AccountsPage />,
+      },
+    ],
   },
   {
     path: '*',
