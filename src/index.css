@@ -21,6 +21,11 @@
   --color-safe: #75c9c8;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
+  /* 財務高風險專用，danger 紅保留給 UI 錯誤。
+     risk（深玫瑰）用於面狀元素：卡片 border、漸層、大色塊；
+     risk-soft（淺珊瑚）用於深底上的警示文字與細進度條（對比 8:1） */
+  --color-risk: #cd295a;
+  --color-risk-soft: #ff8c8c;
 
   /* ===== App Background ===== */
   --color-app-bg: #0f1729;
