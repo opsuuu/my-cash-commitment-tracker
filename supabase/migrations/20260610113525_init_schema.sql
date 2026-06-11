@@ -14,14 +14,20 @@ COMMENT ON COLUMN profiles.email IS '使用者電子郵件';
 COMMENT ON COLUMN profiles.display_name IS '顯示名稱';
 
 -- Auto-create profile on user signup
-CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS trigger AS $$
+-- 注意：此 trigger 由 supabase_auth_admin 觸發，其 search_path 不含 public，
+-- 因此必須鎖定 search_path 並使用完整 schema 路徑
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
 BEGIN
-  INSERT INTO profiles (id, email)
+  INSERT INTO public.profiles (id, email)
   VALUES (NEW.id, NEW.email);
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -56,7 +62,7 @@ CREATE TABLE budget_pools (
   user_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   name text NOT NULL,
   type text NOT NULL CHECK (type IN ('spending', 'saving')),
-  monthly_budget numeric,j
+  monthly_budget numeric,
   target_amount numeric,
   current_amount numeric DEFAULT 0,
   target_date date,
