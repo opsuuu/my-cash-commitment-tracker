@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { supabase } from '@/lib/supabase'
+import { useGoogleLogin } from '@/hooks/useGoogleLogin'
 import { AuthLayout, AuthCard, FormField, GoogleAuthButton } from '@/components/auth'
 import { TextDivider } from '@/components/common'
 import { Button } from '@/components/ui/button'
@@ -27,9 +28,9 @@ interface RegisterFormValues {
 }
 
 export default function RegisterPage() {
-  const [googleLoading, setGoogleLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
+  const { login: googleLogin, loading: googleLoading } = useGoogleLogin(setAuthError)
 
   const {
     register,
@@ -41,28 +42,25 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormValues) => {
     setAuthError(null)
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
     })
     if (error) {
       setAuthError(error.message)
+    } else if (signUpData.user?.identities?.length === 0) {
+      // Supabase 對已存在的 email 會回假成功（identities 為空）以防 email 列舉攻擊
+      setAuthError('此電子郵件已經註冊過，請直接登入或使用 Google 登入')
     } else {
       setSuccess(true)
     }
   }
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setAuthError(null)
-    setGoogleLoading(true)
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin },
-    })
-    if (error) {
-      setAuthError(`Google 登入失敗：${error.message}`)
-      setGoogleLoading(false)
-    }
+    // void = 明確標記不等待此 Promise（fire-and-forget）：
+    // 錯誤已由 hook 內的 onError 處理，成功則整頁跳轉，呼叫端無後續
+    void googleLogin()
   }
 
   return (
@@ -70,11 +68,14 @@ export default function RegisterPage() {
       <AuthCard title="建立帳號">
         {success ? (
           <Alert className="rounded-xl border-transparent bg-pearl-aqua/10 px-4 py-4 text-center">
+            <span className="mb-1 text-4xl" aria-hidden="true">
+              💌
+            </span>
             <AlertTitle className="text-pearl-aqua">驗證信已寄出！</AlertTitle>
             <AlertDescription className="mt-1 block">請查看你的信箱並點擊驗證連結</AlertDescription>
-            <Link to="/login" className="mt-4 text-sm text-primary hover:underline">
-              返回登入
-            </Link>
+            <Button asChild size="lg" className="mt-4 justify-self-center rounded-xl px-6">
+              <Link to="/login">返回登入</Link>
+            </Button>
           </Alert>
         ) : (
           <>
