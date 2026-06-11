@@ -272,3 +272,14 @@ CREATE POLICY "Users can manage own incomes" ON incomes
 -- expenses
 CREATE POLICY "Users can manage own expenses" ON expenses
   FOR ALL USING (auth.uid() = user_id);
+
+-- ============================================================
+-- Grants（Supabase 標準基礎權限；實際資料隔離由上方 RLS policy 負責）
+-- ============================================================
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
