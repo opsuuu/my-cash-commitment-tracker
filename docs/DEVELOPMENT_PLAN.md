@@ -117,17 +117,17 @@ Phase 10 財務分析圖表
 
 ```js
 // eslint.config.js 大致結構
-import tseslint from "typescript-eslint";
-import reactPlugin from "eslint-plugin-react";
-import reactHooksPlugin from "eslint-plugin-react-hooks";
-import prettierConfig from "eslint-config-prettier";
+import tseslint from 'typescript-eslint'
+import reactPlugin from 'eslint-plugin-react'
+import reactHooksPlugin from 'eslint-plugin-react-hooks'
+import prettierConfig from 'eslint-config-prettier'
 
 export default tseslint.config(
   ...tseslint.configs.recommended,
   reactPlugin.configs.flat.recommended,
-  reactHooksPlugin.configs["recommended-latest"],
-  prettierConfig,
-);
+  reactHooksPlugin.configs['recommended-latest'],
+  prettierConfig
+)
 ```
 
 ##### Prettier
@@ -768,10 +768,13 @@ Phase 10 ───────────────────────�
 
 ## Phase 2 後可以留下來繼續做的功能
 
-| 功能                | 說明                                               |
-| ------------------- | -------------------------------------------------- |
-| Partial Settlement  | 承諾支出部分扣款，需要 `commitment_charges` 中間表 |
-| 取消承諾理由分類    | 已退款 / 改單 / 不買了 / 其他                      |
-| AI 預算分配建議     | 根據歷史支出分析給出建議                           |
-| 多幣別支援          | 啟用預留的 `original_currency` / `fx_rate` 欄位    |
-| 月底自動 Sweep 結算 | 自動將未用完的 Spending Pool 轉入指定 Saving Pool  |
+| 功能                   | 說明                                                                                                                                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Partial Settlement     | 承諾支出部分扣款，需要 `commitment_charges` 中間表                                                                                                                                                     |
+| 取消承諾理由分類       | 已退款 / 改單 / 不買了 / 其他                                                                                                                                                                          |
+| AI 預算分配建議        | 根據歷史支出分析給出建議                                                                                                                                                                               |
+| 多幣別支援             | 啟用預留的 `original_currency` / `fx_rate` 欄位                                                                                                                                                        |
+| 月底自動 Sweep 結算    | 自動將未用完的 Spending Pool 轉入指定 Saving Pool                                                                                                                                                      |
+| 設定頁：設定密碼       | 讓 Google-only 帳號補設密碼（`supabase.auth.updateUser({ password })`），啟用 Email + 密碼登入；目前替代管道是忘記密碼流程                                                                             |
+| 登入提示信             | Google-only 帳號被嘗試密碼登入時，寄信告知「你的帳號是用 Google 註冊的」（Edge Function + Admin API）；登入頁維持通用錯誤不洩漏帳號存在性，取代目前的通用文案提示                                      |
+| 自訂 SMTP + 信件中文化 | 部署前設定：Resend（或同類服務）驗證自有網域 → Supabase 啟用自訂 SMTP → 套用 `docs/EMAIL_TEMPLATES.md` 的中文模板。Supabase 已將模板編輯鎖在自訂 SMTP 之後；自訂 SMTP 同時解除內建寄信的每小時速率限制 |
