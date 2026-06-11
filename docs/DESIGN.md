@@ -61,7 +61,7 @@ source_id    uuid  nullable  -- commitment.id
 ### 兩種類型
 
 ```typescript
-type BudgetPoolType = "spending" | "saving";
+type BudgetPoolType = 'spending' | 'saving'
 ```
 
 #### Spending Pool（支出型）
@@ -100,7 +100,7 @@ AI 智慧建議：**Phase 2** 才做（財務系統不適合 MVP 引入 AI）
 ### 月底 Rollover 規則
 
 ```typescript
-type RolloverMode = "reset" | "rollover" | "auto_sweep";
+type RolloverMode = 'reset' | 'rollover' | 'auto_sweep'
 ```
 
 - `reset`：未用完歸零
@@ -127,7 +127,7 @@ budget_pools
 ### 資金模式（Hybrid）
 
 ```typescript
-type PoolMode = "virtual" | "account-backed";
+type PoolMode = 'virtual' | 'account-backed'
 ```
 
 - `account-backed`：綁定特定帳戶，用帳戶餘額計算
@@ -192,9 +192,12 @@ spending_pool_remaining =
 **信用卡使用率（credit_card 帳戶）：**
 
 ```
-已使用額度 = credit_limit + balance（balance 為負數）
+已使用額度 = -balance（balance 為負數代表欠款，例如 -20,000 → 已使用 20,000）
 使用率 = 已使用額度 / credit_limit
+剩餘額度 = credit_limit + balance
 ```
+
+> 範例：額度 150,000、未繳 20,000 → 使用率 = 20,000 / 150,000 ≈ 13%
 
 ---
 
@@ -549,7 +552,7 @@ background: linear-gradient(135deg, #d8b5ff, #1eae98);
 ### 類型
 
 ```typescript
-type CommitmentType = "one_time" | "installment";
+type CommitmentType = 'one_time' | 'installment'
 ```
 
 ### 建立分期承諾時的系統行為
