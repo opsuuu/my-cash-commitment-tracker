@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
@@ -7,7 +7,6 @@ import { useCreateAccount, useUpdateAccount, type Account } from '@/hooks/useAcc
 import { ACCOUNT_TYPES, ACCOUNT_TYPE_LABELS, type AccountType } from '@/constants/accounts'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
@@ -16,13 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { FormSelect, FormField, type FormSelectOption } from '@/components/common'
 
 const accountSchema = z
   // 信用卡的「未繳金額」在 UI 一律以正數輸入，存檔時才轉為負數（資料層以負數代表欠款）
@@ -40,6 +33,11 @@ interface AccountFormValues {
   creditLimit?: number
 }
 
+const TYPE_OPTIONS: FormSelectOption[] = ACCOUNT_TYPES.map((t) => ({
+  value: t,
+  label: ACCOUNT_TYPE_LABELS[t],
+}))
+
 interface AccountFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -56,7 +54,6 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
     register,
     handleSubmit,
     control,
-    watch,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<AccountFormValues>({
@@ -64,7 +61,7 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
     defaultValues: { name: '', type: 'bank', balance: 0 },
   })
 
-  const selectedType = watch('type')
+  const selectedType = useWatch({ control, name: 'type' })
 
   useEffect(() => {
     if (open) {
@@ -125,10 +122,7 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Label htmlFor="account-name" className="mb-2 text-lavender">
-              帳戶名稱
-            </Label>
+          <FormField label="帳戶名稱" htmlFor="account-name" error={errors.name?.message}>
             <Input
               id="account-name"
               placeholder="例如：台新銀行、皮夾現金"
@@ -136,36 +130,24 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
               className="h-11 rounded-xl bg-white/5 px-4 md:text-base"
               {...register('name')}
             />
-            {errors.name && <p className="mt-1 text-xs text-danger">{errors.name.message}</p>}
-          </div>
+          </FormField>
 
-          <div>
-            <Label className="mb-2 text-lavender">帳戶類型</Label>
-            <Controller
+          <FormField label="帳戶類型">
+            <FormSelect
               control={control}
               name="type"
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full rounded-xl bg-white/5 px-4 data-[size=default]:h-11 md:text-base">
-                    <SelectValue placeholder="選擇類型" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ACCOUNT_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {ACCOUNT_TYPE_LABELS[type]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+              options={TYPE_OPTIONS}
+              placeholder="選擇類型"
+              className="w-full rounded-xl bg-white/5 px-4 data-[size=default]:h-11 md:text-base"
             />
-          </div>
+          </FormField>
 
           {!isEdit && (
-            <div>
-              <Label htmlFor="account-balance" className="mb-2 text-lavender">
-                {selectedType === 'credit_card' ? '目前未繳金額' : '初始餘額'}
-              </Label>
+            <FormField
+              label={selectedType === 'credit_card' ? '目前未繳金額' : '初始餘額'}
+              htmlFor="account-balance"
+              error={errors.balance?.message}
+            >
               <Input
                 id="account-balance"
                 type="number"
@@ -182,17 +164,15 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
                   填「總欠款」＝已出帳未繳＋未出帳金額。快速算法：信用額度 − 銀行 app 顯示的可用餘額
                 </p>
               )}
-              {errors.balance && (
-                <p className="mt-1 text-xs text-danger">{errors.balance.message}</p>
-              )}
-            </div>
+            </FormField>
           )}
 
           {selectedType === 'credit_card' && (
-            <div>
-              <Label htmlFor="account-credit-limit" className="mb-2 text-lavender">
-                信用額度（選填）
-              </Label>
+            <FormField
+              label="信用額度（選填）"
+              htmlFor="account-credit-limit"
+              error={errors.creditLimit?.message}
+            >
               <Input
                 id="account-credit-limit"
                 type="number"
@@ -204,10 +184,7 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
                   setValueAs: (v) => (v === '' ? undefined : Number(v)),
                 })}
               />
-              {errors.creditLimit && (
-                <p className="mt-1 text-xs text-danger">{errors.creditLimit.message}</p>
-              )}
-            </div>
+            </FormField>
           )}
 
           <DialogFooter className="pt-2">

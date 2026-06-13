@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
@@ -7,7 +7,6 @@ import { useAdjustBalance, type Account } from '@/hooks/useAccounts'
 import { formatCurrency } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
@@ -16,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { FormField } from '@/components/common'
 
 // 信用卡的「未繳金額」在 UI 一律以正數輸入，存檔時才轉為負數（資料層以負數代表欠款）
 const adjustBalanceSchema = z.object({
@@ -47,7 +47,7 @@ export default function AdjustBalanceDialog({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<AdjustBalanceFormValues>({
@@ -63,7 +63,7 @@ export default function AdjustBalanceDialog({
     }
   }, [open, account, isCreditCard, reset])
 
-  const newBalance = watch('newBalance')
+  const newBalance = useWatch({ control, name: 'newBalance' })
   const diff = typeof newBalance === 'number' ? newBalance - displayBalance : 0
   // 信用卡未繳金額增加 = 財務變差；一般帳戶餘額增加 = 財務變好
   const diffIsGood = isCreditCard ? diff < 0 : diff > 0
@@ -95,10 +95,11 @@ export default function AdjustBalanceDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Label htmlFor="adjust-balance" className="mb-2 text-lavender">
-              {isCreditCard ? '調整後未繳金額' : '調整後餘額'}
-            </Label>
+          <FormField
+            label={isCreditCard ? '調整後未繳金額' : '調整後餘額'}
+            htmlFor="adjust-balance"
+            error={errors.newBalance?.message}
+          >
             <Input
               id="adjust-balance"
               type="number"
@@ -119,15 +120,9 @@ export default function AdjustBalanceDialog({
                 </span>
               </p>
             )}
-            {errors.newBalance && (
-              <p className="mt-1 text-xs text-danger">{errors.newBalance.message}</p>
-            )}
-          </div>
+          </FormField>
 
-          <div>
-            <Label htmlFor="adjust-reason" className="mb-2 text-lavender">
-              調整原因
-            </Label>
+          <FormField label="調整原因" htmlFor="adjust-reason" error={errors.reason?.message}>
             <Input
               id="adjust-reason"
               placeholder={
@@ -137,8 +132,7 @@ export default function AdjustBalanceDialog({
               className="h-11 rounded-xl bg-white/5 px-4 md:text-base"
               {...register('reason')}
             />
-            {errors.reason && <p className="mt-1 text-xs text-danger">{errors.reason.message}</p>}
-          </div>
+          </FormField>
 
           <DialogFooter className="pt-2">
             <Button
