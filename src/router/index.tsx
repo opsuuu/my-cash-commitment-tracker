@@ -3,6 +3,7 @@ import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
 import AppLayout from '@/components/layout/AppLayout'
 import AccountsPage from '@/pages/accounts/AccountsPage'
+import BudgetPoolsPage from '@/pages/budget-pools/BudgetPoolsPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: '/accounts',
         element: <AccountsPage />,
+      },
+      {
+        path: '/budget-pools',
+        element: <BudgetPoolsPage />,
       },
     ],
   },

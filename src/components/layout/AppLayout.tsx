@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 const navItems = [
   { to: '/', label: 'Dashboard' },
   { to: '/accounts', label: '帳戶' },
+  { to: '/budget-pools', label: '預算池' },
 ]
 
 export default function AppLayout() {
