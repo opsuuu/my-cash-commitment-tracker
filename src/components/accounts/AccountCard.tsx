@@ -20,7 +20,7 @@ export default function AccountCard({ account, onEdit, onAdjust }: AccountCardPr
   // 信用卡使用率 = 未繳欠款 / 額度（balance 為負數代表欠款；溢繳時視為 0%）
   const creditUsage =
     type === 'credit_card' && account.credit_limit
-      ? Math.max(-account.balance, 0) / account.credit_limit
+      ? Math.max(-account.current_balance, 0) / account.credit_limit
       : null
 
   const handleToggleActive = async () => {
@@ -61,13 +61,15 @@ export default function AccountCard({ account, onEdit, onAdjust }: AccountCardPr
                     : 'text-wisteria-blue'
                 )}
               >
-                {formatCurrency(Math.abs(account.balance))}
+                {formatCurrency(Math.abs(account.current_balance))}
               </p>
-              <p className="text-xs text-text-muted">{account.balance > 0 ? '溢繳' : '未繳'}</p>
+              <p className="text-xs text-text-muted">
+                {account.current_balance > 0 ? '溢繳' : '未繳'}
+              </p>
             </div>
           ) : (
             <p className="text-lg font-semibold text-floral-white">
-              {formatCurrency(account.balance)}
+              {formatCurrency(account.current_balance)}
             </p>
           )}
         </div>

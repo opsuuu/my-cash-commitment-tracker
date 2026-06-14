@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Tables, TablesInsert, TablesUpdate } from '@/types/database.types'
+import type { Database, TablesInsert, TablesUpdate } from '@/types/database.types'
 
-export type Account = Tables<'accounts'>
+// 讀模型：account_balances view，current_balance 由交易即時推導（Ledger Model）。
+// 寫入仍針對 accounts 表（initial_balance）；餘額變動靠新增交易，不直接改帳戶。
+// 直接取 view 的 Row（繞過 Tables<> helper，其 intersection 對 view-only key 會退化成 never）。
+export type Account = Database['public']['Views']['account_balances']['Row']
 
 const accountsKey = ['accounts'] as const
 
@@ -12,7 +15,7 @@ export function useAccounts() {
     queryKey: accountsKey,
     queryFn: async (): Promise<Account[]> => {
       const { data, error } = await supabase
-        .from('accounts')
+        .from('account_balances')
         .select('*')
         .order('created_at', { ascending: true })
       if (error) throw error
@@ -71,25 +74,16 @@ export function useAdjustBalance() {
   return useMutation({
     mutationFn: async ({ account, newBalance, reason }: AdjustBalanceInput) => {
       if (!user) throw new Error('尚未登入')
-      // 先寫入調整記錄再更新餘額；若餘額更新失敗，多一筆記錄但餘額未變，
-      // 不會造成金額錯誤（反向順序失敗則會丟失調整原因）
-      const { error: logError } = await supabase.from('balance_adjustments').insert({
+      // Ledger Model：調整餘額 = 新增一筆 adjustment 交易（delta = new − previous），
+      // 不直接改帳戶；current_balance 由 account_balances view 重新推導。
+      const { error } = await supabase.from('balance_adjustments').insert({
         user_id: user.id,
         account_id: account.id,
-        previous_balance: account.balance,
+        previous_balance: account.current_balance,
         new_balance: newBalance,
         reason,
       })
-      if (logError) throw logError
-
-      const { data, error } = await supabase
-        .from('accounts')
-        .update({ balance: newBalance })
-        .eq('id', account.id)
-        .select()
-        .single()
       if (error) throw error
-      return data
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: accountsKey }),
   })

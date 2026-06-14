@@ -18,7 +18,7 @@ export default function AccountsPage() {
 
   const activeAccounts = accounts?.filter((a) => a.is_active) ?? []
   const inactiveAccounts = accounts?.filter((a) => !a.is_active) ?? []
-  const totalBalance = activeAccounts.reduce((sum, a) => sum + a.balance, 0)
+  const totalBalance = activeAccounts.reduce((sum, a) => sum + a.current_balance, 0)
 
   const openCreate = () => {
     setEditingAccount(null)

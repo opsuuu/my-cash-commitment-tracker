@@ -42,7 +42,11 @@ export default function AdjustBalanceDialog({
   const adjustBalance = useAdjustBalance()
   const isCreditCard = account?.type === 'credit_card'
   // UI 顯示值：信用卡將負數欠款轉為正數的「未繳金額」
-  const displayBalance = account ? (isCreditCard ? -account.balance : account.balance) : 0
+  const displayBalance = account
+    ? isCreditCard
+      ? -account.current_balance
+      : account.current_balance
+    : 0
 
   const {
     register,
@@ -57,7 +61,7 @@ export default function AdjustBalanceDialog({
   useEffect(() => {
     if (open && account) {
       reset({
-        newBalance: isCreditCard ? -account.balance : account.balance,
+        newBalance: isCreditCard ? -account.current_balance : account.current_balance,
         reason: '',
       })
     }

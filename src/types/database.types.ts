@@ -80,33 +80,33 @@ export type Database = {
       }
       accounts: {
         Row: {
-          balance: number
           created_at: string | null
           credit_limit: number | null
           currency: string
           id: string
+          initial_balance: number
           is_active: boolean
           name: string
           type: string
           user_id: string
         }
         Insert: {
-          balance?: number
           created_at?: string | null
           credit_limit?: number | null
           currency?: string
           id?: string
+          initial_balance?: number
           is_active?: boolean
           name: string
           type: string
           user_id: string
         }
         Update: {
-          balance?: number
           created_at?: string | null
           credit_limit?: number | null
           currency?: string
           id?: string
+          initial_balance?: number
           is_active?: boolean
           name?: string
           type?: string
@@ -530,7 +530,23 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      // 手動補上（CLI 未 link）；對應 migration 20260614150000_ledger_model.sql
+      // 推導式餘額：current_balance = initial_balance + Σincome − Σexpense + Σadj_delta
+      account_balances: {
+        Row: {
+          created_at: string | null
+          credit_limit: number | null
+          currency: string
+          current_balance: number
+          id: string
+          initial_balance: number
+          is_active: boolean
+          name: string
+          type: string
+          user_id: string
+        }
+        Relationships: []
+      }
     }
     Functions: {
       // 手動補上（CLI 未 link 無法 gen types）；對應 migration

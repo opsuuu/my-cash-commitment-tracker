@@ -9,6 +9,7 @@ import {
   type CommitmentSchedule,
 } from '@/hooks/useCommitments'
 import { useAccounts } from '@/hooks/useAccounts'
+import { getToday } from '@/lib/date'
 import { formatCurrency } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -64,8 +65,8 @@ export default function ChargeDialog({
       value: a.id,
       label:
         a.type === 'credit_card'
-          ? `${a.name}（未繳 ${formatCurrency(-a.balance)}）`
-          : `${a.name}（餘額 ${formatCurrency(a.balance)}）`,
+          ? `${a.name}（未繳 ${formatCurrency(-a.current_balance)}）`
+          : `${a.name}（餘額 ${formatCurrency(a.current_balance)}）`,
     }))
 
   const {
@@ -86,7 +87,7 @@ export default function ChargeDialog({
       reset({
         accountId: '',
         actualAmount: estimated,
-        chargeDate: new Date().toISOString().slice(0, 10),
+        chargeDate: getToday(),
         note: '',
       })
     }

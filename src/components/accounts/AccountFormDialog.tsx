@@ -69,7 +69,7 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
         name: account?.name ?? '',
         type: (account?.type as AccountType) ?? 'bank',
         // 編輯模式餘額欄位不顯示，僅佔位；信用卡取絕對值避免負數卡住驗證
-        balance: account ? Math.abs(account.balance) : 0,
+        balance: account ? Math.abs(account.current_balance) : 0,
         creditLimit: account?.credit_limit ?? undefined,
       })
     }
@@ -81,7 +81,7 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
       isEdit &&
       account.type === 'credit_card' &&
       data.type !== 'credit_card' &&
-      account.balance < 0
+      account.current_balance < 0
     ) {
       toast.error('此信用卡尚有未繳金額，請先將未繳金額調整為 0 再變更類型')
       return
@@ -99,8 +99,8 @@ export default function AccountFormDialog({ open, onOpenChange, account }: Accou
         await createAccount.mutateAsync({
           name: data.name,
           type: data.type,
-          // 信用卡輸入的是未繳金額（正數），資料層以負數代表欠款
-          balance: data.type === 'credit_card' ? -data.balance : data.balance,
+          // 信用卡輸入的是未繳金額（正數），資料層以負數代表欠款；存為起始餘額
+          initial_balance: data.type === 'credit_card' ? -data.balance : data.balance,
           credit_limit: data.type === 'credit_card' ? (data.creditLimit ?? null) : null,
         })
         toast.success('帳戶已建立')

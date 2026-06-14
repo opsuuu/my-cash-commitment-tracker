@@ -17,7 +17,9 @@ interface SavingPoolCardProps {
 export default function SavingPoolCard({ pool, accounts, onEdit, onDelete }: SavingPoolCardProps) {
   const linkedAccount = accounts.find((a) => a.id === pool.linked_account_id)
   const isAccountBacked = (pool.pool_mode as PoolMode) === 'account-backed'
-  const current = isAccountBacked ? (linkedAccount?.balance ?? 0) : (pool.current_amount ?? 0)
+  const current = isAccountBacked
+    ? (linkedAccount?.current_balance ?? 0)
+    : (pool.current_amount ?? 0)
   const target = pool.target_amount ?? 0
   const progress = target > 0 ? Math.max(current, 0) / target : 0
 
