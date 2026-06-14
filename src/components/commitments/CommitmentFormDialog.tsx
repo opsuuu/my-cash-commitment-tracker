@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { useCreateCommitment, useUpdateCommitment, type Commitment } from '@/hooks/useCommitments'
 import { useBudgetPools } from '@/hooks/useBudgetPools'
-import { getCurrentMonth } from '@/lib/date'
+import { getCurrentMonth, getToday } from '@/lib/date'
 import { formatCurrency } from '@/lib/format'
 import {
   COMMITMENT_TYPES,
@@ -86,7 +86,7 @@ function toFormValues(commitment: Commitment | null | undefined): CommitmentForm
     type: (commitment?.type as CommitmentType) ?? 'one_time',
     priority: (commitment?.priority as CommitmentPriority) ?? 'medium',
     amount: commitment?.amount ?? (undefined as unknown as number),
-    orderDate: commitment?.order_date ?? new Date().toISOString().slice(0, 10),
+    orderDate: commitment?.order_date ?? getToday(),
     expectedChargeDate: commitment?.expected_charge_date ?? undefined,
     installmentCount: commitment?.installment_count ?? undefined,
     startMonth: commitment?.start_month ?? getCurrentMonth(),
