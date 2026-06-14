@@ -533,7 +533,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      // 手動補上（CLI 未 link 無法 gen types）；對應 migration
+      // 20260614093000_add_settle_commitment_function.sql
+      settle_commitment: {
+        Args: {
+          p_commitment_id: string
+          p_account_id: string
+          p_actual_amount: number
+          p_charge_date: string
+          p_schedule_id?: string
+          p_note?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
