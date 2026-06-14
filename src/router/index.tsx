@@ -5,6 +5,7 @@ import AppLayout from '@/components/layout/AppLayout'
 import AccountsPage from '@/pages/accounts/AccountsPage'
 import BudgetPoolsPage from '@/pages/budget-pools/BudgetPoolsPage'
 import CommitmentsPage from '@/pages/commitments/CommitmentsPage'
+import IncomesPage from '@/pages/income/IncomesPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import RegisterPage from '@/pages/auth/RegisterPage'
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage'
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
       {
         path: '/commitments',
         element: <CommitmentsPage />,
+      },
+      {
+        path: '/income',
+        element: <IncomesPage />,
       },
     ],
   },

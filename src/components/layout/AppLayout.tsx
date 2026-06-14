@@ -4,6 +4,7 @@ import {
   WalletIcon,
   PiggyBankIcon,
   ReceiptIcon,
+  TrendingUpIcon,
   type LucideIcon,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
@@ -22,6 +23,7 @@ const navItems: NavItem[] = [
   { to: '/accounts', label: '帳戶', icon: WalletIcon },
   { to: '/budget-pools', label: '預算池', icon: PiggyBankIcon },
   { to: '/commitments', label: '承諾支出', icon: ReceiptIcon },
+  { to: '/income', label: '收入', icon: TrendingUpIcon },
 ]
 
 export default function AppLayout() {
