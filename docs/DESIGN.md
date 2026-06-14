@@ -77,6 +77,11 @@ type BudgetPoolType = 'spending' | 'saving'
 - 有目標金額（`target_amount`）
 - 進度公式：`progress = current_amount / target_amount`
 - 原 `saving_goals` 表**合併進此類型**，不另立表
+- **承諾可綁儲蓄池**：承諾支出可歸屬儲蓄池（代表「為此目標花費」，例：iPhone 基金）。
+  進度公式維持 `current_amount / target_amount` **不變**；另以「儲蓄池健康度」視圖呈現
+  缺口 `已存 − 已承諾`（例：已存 15,000・已承諾 40,000・缺口 −25,000），把「還沒存夠
+  就提前承諾購買」的衝動情境攤出來。此為 DESIGN 四「Pool Health」概念延伸到一般儲蓄池，
+  與 Phase 8 Dashboard 一起實作（見 DEVELOPMENT_PLAN backlog）。
 
 ### 三層模型
 
