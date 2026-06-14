@@ -5,6 +5,7 @@ import {
   PiggyBankIcon,
   ReceiptIcon,
   TrendingUpIcon,
+  TrendingDownIcon,
   type LucideIcon,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
@@ -21,9 +22,10 @@ interface NavItem {
 const navItems: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboardIcon },
   { to: '/accounts', label: '帳戶', icon: WalletIcon },
+  { to: '/income', label: '收入', icon: TrendingUpIcon },
   { to: '/budget-pools', label: '預算池', icon: PiggyBankIcon },
   { to: '/commitments', label: '承諾支出', icon: ReceiptIcon },
-  { to: '/income', label: '收入', icon: TrendingUpIcon },
+  { to: '/expenses', label: '實際支出', icon: TrendingDownIcon },
 ]
 
 export default function AppLayout() {
@@ -48,7 +50,7 @@ export default function AppLayout() {
                   end={item.to === '/'}
                   className={({ isActive }) =>
                     cn(
-                      'rounded-lg px-3 py-1.5 text-sm transition',
+                      'rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition',
                       isActive
                         ? 'bg-secondary font-medium text-periwinkle'
                         : 'text-text-secondary hover:bg-muted hover:text-foreground'
@@ -62,7 +64,9 @@ export default function AppLayout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-text-muted sm:inline">{user?.email}</span>
+            <span className="hidden max-w-40 truncate text-sm text-text-muted lg:inline-block">
+              {user?.email}
+            </span>
             <Button
               variant="outline"
               size="sm"
